@@ -1,0 +1,55 @@
+# Disable directory listing
+Options -Indexes
+
+# Hanya izinkan file gambar dan PDF
+<FilesMatch "(?i)\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|htm|html|shtml|sh|cgi)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Izinkan file gambar
+<FilesMatch "(?i)\.(gif|jpe?g|png)$">
+    Order Deny,Allow
+    Allow from all
+</FilesMatch>
+
+# Izinkan file PDF
+<FilesMatch "(?i)\.pdf$">
+    Order Deny,Allow
+    Allow from all
+</FilesMatch>
+
+# Batasi akses langsung ke file
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP_REFERER} !^http://(www\.)?localhost [NC]
+    RewriteCond %{HTTP_REFERER} !^http://(www\.)?yourdomain\.com [NC]
+    RewriteRule \.(gif|jpg|jpeg|png|pdf)$ - [F]
+</IfModule>
+
+# Protect against malicious file uploads
+<IfModule mod_php5.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 11M
+    php_flag file_uploads On
+</IfModule>
+
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 11M
+    php_flag file_uploads On
+</IfModule>
+
+# Compress files
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE image/jpeg
+    AddOutputFilterByType DEFLATE image/png
+    AddOutputFilterByType DEFLATE image/gif
+    AddOutputFilterByType DEFLATE application/pdf
+</IfModule>
+
+# Set proper MIME types
+AddType image/jpeg .jpg .jpeg
+AddType image/png .png
+AddType image/gif .gif
+AddType application/pdf .pdf

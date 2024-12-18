@@ -1,0 +1,39 @@
+# Disable directory listing
+Options -Indexes
+
+# Hanya izinkan file gambar
+<FilesMatch "(?i)\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|htm|html|shtml|sh|cgi)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "(?i)\.(gif|jpe?g|png)$">
+    Order Deny,Allow
+    Allow from all
+</FilesMatch>
+
+# Batasi ukuran upload
+<IfModule mod_php5.c>
+    php_value upload_max_filesize 5M
+    php_value post_max_size 6M
+</IfModule>
+
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 5M
+    php_value post_max_size 6M
+</IfModule>
+
+# Batasi akses langsung ke file
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP_REFERER} !^http://(www\.)?localhost [NC]
+    RewriteCond %{HTTP_REFERER} !^http://(www\.)?yourdomain\.com [NC]
+    RewriteRule \.(gif|jpg|jpeg|png)$ - [F]
+</IfModule>
+
+# Compress images
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE image/jpeg
+    AddOutputFilterByType DEFLATE image/png
+    AddOutputFilterByType DEFLATE image/gif
+</IfModule>
